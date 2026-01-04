@@ -1,3 +1,5 @@
+# This file fetches images using mapbox api, to both train and test sets.
+
 import pandas as pd
 import requests
 import os
@@ -13,9 +15,8 @@ if not MAPBOX_TOKEN:
     raise ValueError("MapBox key error, check you .env file!.")
 
 # File Setup
-INPUT_FILE = "data/train(1).xlsx"
 IMAGE_FOLDER = "data/images"
-LOG_FILE = "download_log.txt"
+# INPUT_FILE variable removed because we now pass it into the function directly. # <<< MODIFIED
 
 # Image Settings
 ZOOM = 18
@@ -39,7 +40,9 @@ def download_image(row):
 
         filename = os.path.join(IMAGE_FOLDER, f"{prop_id}.jpg")
 
-        # Skip if already exists
+        # (Skip if already exists)
+        # This is an important 'if', as this is the one that prevents duplicates.
+        # If the program ever crsashes mid-way, this skips over the recieved images n continues further till the end.
         if os.path.exists(filename):
             return None
 
@@ -48,7 +51,7 @@ def download_image(row):
 
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
-            with open(filename, "wb") as f:
+            with open(filename, "wb") as f:  # Since it's for images, its wb mode.
                 f.write(response.content)
             return None  # Success
         else:
@@ -58,18 +61,20 @@ def download_image(row):
         return f"Failed ID {row.get('id', 'Unknown')}: {e}"
 
 
-def main():
+# I changed 'main' to 'process_excel' so one can reuse it for both files. # <<< MODIFIED
+def process_excel(file_path):
+
     # 1_Setup Folders
     if not os.path.exists(IMAGE_FOLDER):
         os.makedirs(IMAGE_FOLDER)
 
     # 2_Load Excel
-    print(f"Loading {INPUT_FILE}...")
+    print(f"\nLoading {file_path}...")  # <<< MODIFIED to print the specific file name
     try:
-        df = pd.read_excel(INPUT_FILE)
+        df = pd.read_excel(file_path)  # <<< MODIFIED to use the argument variable
         print(f"Loaded {len(df)} rows.")
     except FileNotFoundError:
-        print(f"ERROR: File {INPUT_FILE} not found. Check the name!")
+        print(f"ERROR: File {file_path} not found. Check the name!")
         return
 
     # 3_Parallel Download
@@ -80,12 +85,24 @@ def main():
 
     # 4_Summary
     errors = [r for r in results if r is not None]
-    print(f"\nDONE! Processed {len(df)} rows.")
+    print(f"DONE! Processed {len(df)} rows form {file_path}.")  # <<< MODIFIED
+
     if errors:
-        print(f"{len(errors)} errors occurred. Saving to {LOG_FILE}.")
-        with open(LOG_FILE, "w") as f:
+        # Saving errors to a unique log_file to prevent overwritiing each other # <<< MODIFIED
+        log_file = f"errors_{os.path.basename(file_path)}.txt"
+        print(f"{len(errors)} errors occurred. Saving to {log_file}.")
+        with open(log_file, "w") as f:
             f.write("\n".join(errors))
 
 
 if __name__ == "__main__":
-    main()
+
+    # List of files to process (Train AND Test) # <<< MODIFIED
+    files_list = ["data/train(1).xlsx", "data/test2.xlsx"]
+
+    # Changed from main to this so that both test n train data-sets can be done in one single stretch
+    # Loop through the list and run the process for each # <<< MODIFIED
+    for file_name in files_list:
+        process_excel(file_name)
+
+    print("\nAll files processed successfully.")
