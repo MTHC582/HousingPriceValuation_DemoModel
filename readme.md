@@ -50,4 +50,62 @@ Satellite_Housing_Valuation_DemoModel/
 
 ---
 
-**_Further details are provided along .py files itself._**
+## Source Code Guide
+
+### data_fetcher.py:
+
+- The Collector.
+- Takes the Excel file with Latitude/Longitude coordinates.
+- Connects to the Mapbox Static API (or Google Maps).
+- Downloads a satellite snapshot for each property and saves it as ID.jpg in the data/images folder.
+
+### dataset.py:
+
+- The Data Pipeline.
+- Loads the Excel file using pandas.
+- Handles missing values (fills with 0 or mean).
+- Locates the corresponding image in data/images/ based on the Property ID.
+- Applies image transformations (Resize to 224x224, Convert to Tensor).
+
+### models.py:
+
+- The Brain & Engine.
+- Defines the ValuationModel class.
+- Image Branch: Uses a ResNet-style Convolutional Neural Network (CNN) to extract visual features.
+- Tabular Branch: Uses Fully Connected Layers (Linear -> ReLU) to process numerical data.
+- Fusion: Concatenates both outputs and passes them through a final regression layer to predict price.
+
+### train.py:
+
+- The Teacher.
+- Sets up the training loop (Forward Pass -> Loss Calculation -> Backpropagation).
+- Uses MSELoss (Mean Squared Error) to measure accuracy.
+- Optimizes weights using the Adam optimizer.
+- Saves the model with the lowest validation loss as best_model.pth.
+
+### predict.py:
+
+- The Valuator.
+- Loads the trained best_model.pth.
+- Runs inference on a random sample of validation data.
+- Prints a clean table comparing Actual Price vs. Predicted Price.
+
+## Troubleshooting & Tips
+
+We faced several hurdles getting the GPU environment stable. Here are some tips to avoid them:
+
+### 1. Torch not compiled with CUDA enabled:
+
+- This happens if you just run pip install torch. You must install the specific CUDA version.  
+  Use the command given in requirements.txt or run:
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+```
+
+### 2. Image Loading Errors:
+
+- Ensure your data/images folder is structured simply as a list of files (1234.jpg, 1235.jpg).
+- If the code crashes on a missing image, dataset.py is designed to skip it or handle it gracefully—check your terminal logs for warnings.
+
+_*Further details are provided inside .py files itself.*_
