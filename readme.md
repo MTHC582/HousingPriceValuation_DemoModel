@@ -107,4 +107,57 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 - Ensure your data/images folder is structured simply as a list of files (1234.jpg, 1235.jpg).
 - If the code crashes on a missing image, dataset.py is designed to skip it or handle it gracefully—check your terminal logs for warnings.
 
+## Dataset Description
+
+The dataset used in this project is provided as an Excel file and contains structured tabular data for residential property valuation.
+
+- **File:** `data/train(1).xlsx`, `data/test2.xlsx`
+- **Rows:** ~16,200 + 5,400
+- **Columns:** 21
+- **Format:** Excel (`.xlsx`)
+- **Task:** Supervised learning (Regression – Property Price Prediction)
+
+---
+
+## Column Description
+
+| Column Name | Description |
+|------------|------------|
+| `id` | Unique identifier for each property |
+| `date` | Date when the property was sold |
+| `price` | **Target variable** — sale price of the property |
+| `bedrooms` | Number of bedrooms |
+| `bathrooms` | Number of bathrooms |
+| `sqft_living` | Living area size (in square feet) |
+| `sqft_lot` | Total land area (in square feet) |
+| `floors` | Number of floors in the property |
+| `waterfront` | Indicates whether the property has a waterfront view (1 = Yes, 0 = No) |
+| `view` | Quality of the view from the property |
+| `condition` | Overall condition rating of the property |
+| `grade` | Overall construction and design grade |
+| `sqft_above` | Square footage of the property above ground |
+| `sqft_basement` | Square footage of the basement |
+| `yr_built` | Year the property was originally built |
+| `yr_renovated` | Year of the most recent renovation (0 if never renovated) |
+| `zipcode` | ZIP code of the property location |
+| `lat` | Latitude coordinate |
+| `long` | Longitude coordinate |
+| `sqft_living15` | Average living area size of nearby properties |
+| `sqft_lot15` | Average lot size of nearby properties |
+
+---
+
+## Data Notes
+
+- The dataset is included directly in the repository for reproducibility
+- Missing or zero values (e.g., `yr_renovated = 0`) are handled during preprocessing
+- Numerical features are scaled before model training
+- Geographic features (`lat`, `long`) are used for spatial understanding
+
+---
+
+## Reproducibility
+
+All experiments and model training steps in this repository can be reproduced using the provided dataset and scripts.
+
 _*Further details are provided inside .py files itself.*_
