@@ -21,7 +21,7 @@ This project implements a **Multimodal Neural Network** that fuses traditional t
 
 ## NOTE:
 
-I used python 3.11 since it supports the CUDA. To avoid discrepancies, would suggest the same.
+I used **Python 3.11** as it ensures compatibility with the specific CUDA-enabled PyTorch wheels used in this project. To avoid dependency conflicts, I strongly suggest using the same version.
 
 ---
 
