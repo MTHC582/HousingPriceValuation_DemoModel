@@ -15,7 +15,8 @@ This project implements a **Multimodal Neural Network** that fuses traditional t
 
 - **The ENGINE (Tabular Branch):** A Feed-Forward Network (FFN) processes exact housing specs (bed, bath, sqft) using `pandas` and `openpyxl`.
 - **The BRAIN (Visual Branch):** A ResNet-based CNN processes satellite images to extract environmental features.
-- **The Data:** A custom dataset of **22,000 properties**, with imagery programmatically fetched via the **Mapbox Static API**. (Took about 2.3 GB of DATA,as per the mentioned tools)
+- **The Data:** A custom dataset of **22,000 properties**, with imagery programmatically fetched via the **Mapbox Static API**. (Took about 2.3 GB of DATA,as per the mentioned tools)  
+- The model uses a ResNet-50 backbone pretrained on ImageNet, originally introduced by Microsoft Research.
 
 ---
 
